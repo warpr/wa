@@ -17,7 +17,7 @@
 
           function handleRegister(event) {
               register({
-                  username: 'user-23',
+                  username: document.getElementById('username').value,
                   attestation: 'none',
                   authenticatorSelection: {
                       // https://chromium.googlesource.com/chromium/src/+/master/content/browser/webauth/uv_preferred.md
@@ -25,29 +25,102 @@
                   }
               })
                   .then(response => console.log('Registration OK', response))
-                  .catch(error => console.log('[ERROR] Registration failed', error));
+                  .catch(error => {
+                      console.log('[ERROR] Registration failed', error);
+                      document.getElementById('login-error').textContent = 'Registration failed';
+                  });
           }
 
           function handleLogin(event) {
               login({
-                  username: 'user-23',
+                  username: document.getElementById('username').value,
                   attestation: 'none',
                   userVerification: 'discouraged'
               })
-                  .then(response => console.log('Login OK', response))
-                  .catch(error => console.log('[ERROR] Login failed', error));
+                  .then(response => {
+                      console.log('Login OK', response);
+                      document.getElementById('display-name').textContent = response.user.displayName;
+                      document.getElementById('avatar').src = response.avatar;
+                  })
+                  .catch(error => {
+                      console.log('[ERROR] Login failed', error);
+                      document.getElementById('login-error').textContent = 'Login failed';
+                  });
           }
 
           document.getElementById('register').addEventListener('click', handleRegister);
           document.getElementById('login').addEventListener('click', handleLogin);
         </script>
+        <style>
+         body {
+             background: #181818;
+             color: #888;
+             font-family: Helvetica, Arial, sans-serif;
+             margin: 0;
+             padding: 0;
+         }
+
+         #user {
+             display: flex;
+             position: absolute;
+             top: 10px;
+             right: 10px;
+             margin: 0;
+             padding: 0;
+         }
+
+         #user form {
+             display: inline-block;
+             padding: 0;
+             margin: 0;
+             border: 0;
+         }
+
+         #login-form h1 { margin: 10px; height: 40px; }
+         #login-buttons { margin: 10px; }
+
+         input, button {
+             background: #000;
+             color: #aaa;
+             padding: 10px;
+             margin-right: 10px;
+             border: 1px solid #888;
+             min-width: 8em;
+         }
+
+         #login-error {
+             color: #fff;
+             background: #c04848;
+             padding: 1em;
+             margin: 20px 0px 20px 0px;
+             display: none;
+         }
+
+         #display-name {
+             margin-right: 10px;
+             padding: 10px;
+             border: 0;
+             background: #448;
+             color: #bbb;
+             font-weight: bold;
+         }
+
+        </style>
     </head>
     <body>
+      <div id="user">
+        <form action="/wa/">
+          <button type="submit">Log out</button>
+        </form>
+        <span id="display-name">(logged out)</span>
+        <img width="40" height="40" id="avatar" src="https://www.gravatar.com/avatar/2f37d6f7bda7e7a7574bda43488a181a?d=mp" />
+      </div>
+      <div id="login-form">
         <h1>WebAuthn Demo</h1>
-        <p>
+        <p id="login-error"></p>
+        <p id="login-buttons">
+          <input type="text" id="username" value="" placeholder="email address"></input>
           <button type="button" id="register">new registration</button>
-        </p>
-        <p>
           <button type="button" id="login">login</button>
         </p>
     </body>

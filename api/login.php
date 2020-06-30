@@ -51,7 +51,9 @@ try {
 
 $response = [
     'success' => true,
-    'msg' => 'Login OK, welcome ' . $user->getDisplayName(),
+    'msg' => 'Login OK',
+    'user' => $user,
+    'avatar' => avatar($user->getName()),
 ];
 
 echo json_encode($response, JSON_PRETTY_PRINT) . "\n";

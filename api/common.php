@@ -42,3 +42,9 @@ function generic_error($msg) {
     echo json_encode($body, JSON_PRETTY_PRINT) . "\n";
     die();
 }
+
+function avatar($email)
+{
+    $hash = empty($email) ? md5('lud@example.com') : md5($email);
+    return 'https://www.gravatar.com/avatar/' . $hash . '?d=mp';
+}

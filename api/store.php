@@ -74,14 +74,14 @@ class UserRepository
 {
     private $users = [
         [
-            'display_name' => 'Kuno',
+            'display_name' => 'Kuno Woudt',
             'id' => '23',
-            'username' => 'user-23',
+            'username' => 'kuno@frob.nl',
         ],
         [
-            'display_name' => 'Alexandra',
+            'display_name' => 'Agent Kuno',
             'id' => '30',
-            'username' => 'user-30',
+            'username' => 'frob@outlook.com',
         ]
     ];
 
