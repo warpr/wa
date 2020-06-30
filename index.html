@@ -32,6 +32,7 @@
               login({
                   username: 'user-23',
                   attestation: 'none',
+                  userVerification: 'discouraged'
               })
                   .then(response => console.log('Login OK', response))
                   .catch(error => console.log('[ERROR] Login failed', error));

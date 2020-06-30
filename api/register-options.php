@@ -32,7 +32,7 @@ if (empty($user)) {
 
 // This avoids multiple registration of the same authenticator with the user account
 // Get the list of authenticators associated to the user
-$credential_sources = $credentials->findAllForUserEntity($user);
+$credential_sources = $user ? $credentials->findAllForUserEntity($user) : [];
 
 // Convert the Credential Sources into Public Key Credential Descriptors
 $exclude_credentials = array_map(function (PublicKeyCredentialSource $credential) {

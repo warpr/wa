@@ -25,7 +25,7 @@ if ($post) {
 $user = $all_users->findWebauthnUserByUsername($post['username'] ?? '');
 
 // Get the list of authenticators associated to the user
-$credential_sources = $credentials->findAllForUserEntity($user);
+$credential_sources = $user ? $credentials->findAllForUserEntity($user) : [];
 
 // Convert the Credential Sources into Public Key Credential Descriptors
 $allowed_credentials = array_map(function (PublicKeyCredentialSource $credential) {
@@ -34,8 +34,7 @@ $allowed_credentials = array_map(function (PublicKeyCredentialSource $credential
 
 // We generate the set of options.
 $login_options = $server->generatePublicKeyCredentialRequestOptions(
-    PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_DISCOURAGED,
-//    PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_PREFERRED, // Default value
+    $post['userVerification'] ?? 'discouraged',
     $allowed_credentials
 );
 
