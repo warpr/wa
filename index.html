@@ -1,0 +1,53 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Wawawa WebAuthn Demo</title>
+        <script type="module">
+          import {useRegistration, useLogin} from 'https://cdn.pika.dev/webauthn-helper';
+
+          const register = useRegistration({
+              actionUrl: 'api/register.php',
+              optionsUrl: 'api/register-options.php'
+          });
+
+          const login = useLogin({
+              actionUrl: 'api/login.php',
+              optionsUrl: 'api/login-options.php'
+          });
+
+          function handleRegister(event) {
+              register({
+                  username: 'user-23',
+                  attestation: 'none',
+                  authenticatorSelection: {
+                      // https://chromium.googlesource.com/chromium/src/+/master/content/browser/webauth/uv_preferred.md
+                      userVerification: 'discouraged',
+                  }
+              })
+                  .then(response => console.log('Registration OK', response))
+                  .catch(error => console.log('[ERROR] Registration failed', error));
+          }
+
+          function handleLogin(event) {
+              login({
+                  username: 'user-23',
+                  attestation: 'none',
+              })
+                  .then(response => console.log('Login OK', response))
+                  .catch(error => console.log('[ERROR] Login failed', error));
+          }
+
+          document.getElementById('register').addEventListener('click', handleRegister);
+          document.getElementById('login').addEventListener('click', handleLogin);
+        </script>
+    </head>
+    <body>
+        <h1>WebAuthn Demo</h1>
+        <p>
+          <button type="button" id="register">new registration</button>
+        </p>
+        <p>
+          <button type="button" id="login">login</button>
+        </p>
+    </body>
+</html>
