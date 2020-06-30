@@ -1,0 +1,7 @@
+{
+    "require": {
+        "web-auth/webauthn-lib": "^3.2",
+        "nyholm/psr7-server": "^1.0",
+        "nyholm/psr7": "^1.3"
+    }
+}
