@@ -1,0 +1,9 @@
+{
+  "name": "wa",
+  "moduleAlternatives": {
+    "@web-auth/webauthn-helper": "esm.run"
+  },
+  "dependencies": {
+    "@web-auth/webauthn-helper": "0.0.13"
+  }
+}

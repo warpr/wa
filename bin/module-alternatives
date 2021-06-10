@@ -1,0 +1,74 @@
+#!/bin/env php
+<?php
+   /*
+    * Copyright 2020 Kuno Woudt <kuno@frob.nl>
+    *
+    * This program is free software: you can redistribute it and/or modify
+    * it under the terms of copyleft-next 0.3.1. See
+    * [copyleft-next-0.3.1.txt](copyleft-next-0.3.1.txt).
+    *
+    * SPDX-License-Identifier: copyleft-next-0.3.1
+    */
+
+function msg($message) {
+    echo "[module-alternatives] $message\n";
+}
+
+function esm_run($module) {
+    $pkg_lock_str = file_get_contents(dirname(__DIR__) . '/package-lock.json');
+    $pkg_lock = json_decode($pkg_lock_str, true);
+
+    $locked = $pkg_lock['dependencies'][$module] ?? $pkg_lock['devDependencies'][$module] ?? null;
+    if (empty($locked)) {
+        msg("ERROR: Package $module not found in package-lock.json dependencies");
+        return;
+    }
+
+    $version = $locked['version'];
+
+    $url = "https://esm.run/$module@$version";
+    $body = file_get_contents($url);
+
+    $relative_file = "www/ma/$module.js";
+    $target_file = dirname(__DIR__) . "/" . $relative_file;
+    $target_dir = dirname($target_file);
+
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0777, true);
+        msg("Created target directory: " . dirname($relative_file) . ".");
+    }
+
+    if (is_readable($target_file)) {
+        $existing = file_get_contents($target_file);
+        if ($existing === $body) {
+            msg("$relative_file unchanged.");
+            return;
+        }
+    }
+
+    file_put_contents($target_file, $body);
+    msg("Downloaded $url to $relative_file.");
+}
+
+function main() {
+    $pkg_str = file_get_contents(dirname(__DIR__) . '/package.json');
+    $pkg = json_decode($pkg_str, true);
+
+    if (empty($pkg['moduleAlternatives'])) {
+        echo "No moduleAlternatives specified, nothing to do.\n";
+        return;
+    }
+
+    foreach ($pkg['moduleAlternatives'] as $module => $alt) {
+        switch($alt) {
+        case 'esm.run':
+            esm_run($module);
+            break;
+        default:
+            echo "ERROR: moduleAlternatives.$module alt \"$alt\" not ";
+            echo "recognized, please double check your package.json\n";
+        }
+    }
+}
+
+main();

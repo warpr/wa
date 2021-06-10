@@ -3,7 +3,7 @@
         <meta charset="UTF-8">
         <title>Wawawa WebAuthn Demo</title>
         <script type="module">
-          import {useRegistration, useLogin} from 'https://cdn.pika.dev/webauthn-helper';
+          import {useRegistration, useLogin} from './www/ma/@web-auth/webauthn-helper.js';
 
           const register = useRegistration({
               actionUrl: 'api/register.php',
@@ -15,37 +15,43 @@
               optionsUrl: 'api/login-options.php'
           });
 
-          function handleRegister(event) {
-              register({
-                  username: document.getElementById('username').value,
-                  attestation: 'none',
-                  authenticatorSelection: {
-                      // https://chromium.googlesource.com/chromium/src/+/master/content/browser/webauth/uv_preferred.md
-                      userVerification: 'discouraged',
-                  }
-              })
-                  .then(response => console.log('Registration OK', response))
-                  .catch(error => {
-                      console.log('[ERROR] Registration failed', error);
-                      document.getElementById('login-error').textContent = 'Registration failed';
+          async function handleRegister(event) {
+              let response = null;
+              try {
+                  response = await register({
+                      username: document.getElementById('username').value,
+                      attestation: 'none',
+                      authenticatorSelection: {
+                          // https://chromium.googlesource.com/chromium/src/+/master/content/browser/webauth/uv_preferred.md
+                          userVerification: 'discouraged',
+                      }
                   });
+              } catch (error) {
+                  console.log('[ERROR] Registration failed', error);
+                  document.getElementById('login-error').textContent = 'Registration failed';
+                  return;
+              }
+
+              console.log('Registration OK', response);
           }
 
-          function handleLogin(event) {
-              login({
-                  username: document.getElementById('username').value,
-                  attestation: 'none',
-                  userVerification: 'discouraged'
-              })
-                  .then(response => {
-                      console.log('Login OK', response);
-                      document.getElementById('display-name').textContent = response.user.displayName;
-                      document.getElementById('avatar').src = response.avatar;
-                  })
-                  .catch(error => {
-                      console.log('[ERROR] Login failed', error);
-                      document.getElementById('login-error').textContent = 'Login failed';
+          async function handleLogin(event) {
+              let response = null;
+              try {
+                  response = await login({
+                      username: document.getElementById('username').value,
+                      attestation: 'none',
+                      userVerification: 'discouraged'
                   });
+              } catch (error) {
+                  console.log('[ERROR] Login failed', error);
+                  document.getElementById('login-error').textContent = 'Login failed';
+                  return;
+              }
+
+              console.log('Login OK', response);
+              document.getElementById('display-name').textContent = response.user.displayName;
+              document.getElementById('avatar').src = response.avatar;
           }
 
           document.getElementById('register').addEventListener('click', handleRegister);
